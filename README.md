@@ -44,6 +44,7 @@ This is a Laravel project where users can create an account, login (with manual 
    ```
 
 ## Usage
+1. Visit register page at `http://localhost:8000/register`
 1. Register a new user and that will need to change its status to "Approved" from the database.
 2. Login with your credentials.
 3. Click on "Upload Products" and select an Excel file.
