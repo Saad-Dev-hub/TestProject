@@ -13,7 +13,6 @@ class ProductController extends Controller
     $request->validate([
         'file' => 'required|mimes:xls,xlsx,csv'
     ]);
-
     $path = $request->file('file')->getRealPath();
 
     // Open the file in read-only mode
@@ -23,38 +22,25 @@ class ProductController extends Controller
     $data = [];
 
     // Define a mapping of column names to indices
-    $name_index = null;
-    $quantity_index = null;
-    $type_index = null;
+    $name_index = 0;
+    $quantity_index = 1;
+    $type_index = 2;
+
+    // Flag variable to track whether we are processing the first row
+    $is_first_row = true;
 
     // Loop through each row in the file
     while (($row = fgetcsv($file)) !== false) {
-        // If this is the first row, extract the column indices
-        if ($name_index === null) {
-            $name_index = array_search('name', $row);
-            $quantity_index = array_search('quantity', $row);
-            $type_index = array_search('type', $row);
-
-            // If any of the expected columns are not found, attempt to map them
-            if ($name_index === false || $quantity_index === false || $type_index === false) {
-                for ($i = 0; $i < count($row); $i++) {
-                    if ($name_index === null && preg_match('/name/i', $row[$i])) {
-                        $name_index = $i;
-                    } elseif ($quantity_index === null && preg_match('/quantity/i', $row[$i])) {
-                        $quantity_index = $i;
-                    } elseif ($type_index === null && preg_match('/type/i', $row[$i])) {
-                        $type_index = $i;
-                    }
-                }
-            }
-
-            continue; // skip the header row
+        // If this is the first row, skip it
+        if ($is_first_row) {
+            $is_first_row = false;
+            continue;
         }
 
         // Add the row data to the data array
         $data[] = [
             'name' => $row[$name_index],
-            'slug' => Str::slug($row[$name_index]),
+            'slug' => Str::slug($row[$name_index]), // Add a slug column to the array and set it to the slug of the name
             'qty' => $row[$quantity_index],
             'type' => $row[$type_index],
         ];
