@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            //status 0 =not approved, 1=approved
-            $table->tinyInteger('status')->default(0)->comment('0=not approved, 1=approved');
-            $table->rememberToken();
+            $table->string('slug');
+            $table->string('type')->nullable();
+            $table->integer('qty')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('products');
     }
 };
