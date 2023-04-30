@@ -51,6 +51,50 @@
         <div class="col-md-12">
         <label for="upload-file" class="form-label">Upload your products</label>
         <input type="file" name="file" class="form-control-file" id="upload-file">
+            <table>
+        <thead>
+            <tr>
+                <th>Excel Column</th>
+                <th>Database Column</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td>
+                    <select name="name_column">
+                        <option value="default">Default (products)</option>
+                        <option value="0">Column 1</option>
+                        <option value="1">Column 2</option>
+                        <option value="2">Column 3</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td>
+                    <select name="type_column">
+                        <option value="default">Default (type)</option>
+                        <option value="0">Column 1</option>
+                        <option value="1">Column 2</option>
+                        <option value="2">Column 3</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Quantity</td>
+                <td>
+                    <select name="quantity_column">
+                        <option value="default">Default (qty)</option>
+                        <option value="0">Column 1</option>
+                        <option value="1">Column 2</option>
+                        <option value="2">Column 3</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
         <button type="submit" class="btn btn-primary mt-3">Upload</button>
         </div>
     </form>

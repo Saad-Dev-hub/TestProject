@@ -13,47 +13,54 @@ class ProductController extends Controller
     $request->validate([
         'file' => 'required|mimes:xls,xlsx,csv'
     ]);
-    $path = $request->file('file')->getRealPath();
+// Import the data using the selected mapping options
+$path = $request->file('file')->getRealPath();
 
-    // Open the file in read-only mode
-    $file = fopen($path, "r");
+// Open the file in read-only mode
+$file = fopen($path, "r");
 
-    // Define an array to hold the data from the file
-    $data = [];
+// Define an array to hold the data from the file
+$data = [];
 
-    // Define a mapping of column names to indices
-    $name_index = 0;
-    $quantity_index = 1;
-    $type_index = 2;
+// Get the selected mapping options
+$name_index = ($request->input('name_column') == 'default') ? 0 : $request->input('name_column');
+$type_index = ($request->input('type_column') == 'default') ? 2 : $request->input('type_column');
+$quantity_index = ($request->input('quantity_column') == 'default') ? 1 : $request->input('quantity_column');
 
-    // Flag variable to track whether we are processing the first row
-    $is_first_row = true;
+// Define an array to hold the mapping options
+$mapping_options = [
+    'name_index' => $name_index,
+    'type_index' => $type_index,
+    'quantity_index' => $quantity_index,
+];
+// Flag variable to track whether we are processing the first row
+$is_first_row = true;
 
-    // Loop through each row in the file
-    while (($row = fgetcsv($file)) !== false) {
-        // If this is the first row, skip it
-        if ($is_first_row) {
-            $is_first_row = false;
-            continue;
-        }
-
-        // Add the row data to the data array
-        $data[] = [
-            'name' => $row[$name_index],
-            'slug' => Str::slug($row[$name_index]), // Add a slug column to the array and set it to the slug of the name
-            'qty' => $row[$quantity_index],
-            'type' => $row[$type_index],
-        ];
+// Loop through each row in the file
+while (($row = fgetcsv($file)) !== false) {
+    // Add the row data to the data array
+    //skip the first row
+    if ($is_first_row) {
+        $is_first_row = false;
+        continue;
     }
+    $data[] = [
+        'name' => $row[$name_index],
+        'qty' => $row[$quantity_index],
+        'type' => $row[$type_index],
+    ];
+}
+// Close the file
+fclose($file);
+// Insert the data into the database
+DB::table('products')->insert($data);
 
-    // Close the file
-    fclose($file);
+// Redirect back to the previous page with a success message
+return redirect()->back()->with('success', 'Data has been imported successfully.');
 
-    // Insert the data into the database
-    DB::table('products')->insert($data);
 
-    // Redirect back to the previous page with a success message
-    return redirect()->back()->with('success', 'Data has been imported successfully.');
+
+
 }
 
 }
